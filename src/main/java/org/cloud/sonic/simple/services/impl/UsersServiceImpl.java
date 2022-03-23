@@ -1,4 +1,4 @@
-package com.sonic.simple.services.impl;
+package org.cloud.sonic.simple.services.impl;
 
 import org.cloud.sonic.simple.exception.SonicException;
 import org.cloud.sonic.simple.mapper.UsersMapper;
@@ -7,6 +7,7 @@ import org.cloud.sonic.simple.models.http.ChangePwd;
 import org.cloud.sonic.simple.models.http.RespEnum;
 import org.cloud.sonic.simple.models.http.RespModel;
 import org.cloud.sonic.simple.models.http.UserInfo;
+import org.cloud.sonic.simple.models.interfaces.UserLoginType;
 import org.cloud.sonic.simple.services.UsersService;
 import org.cloud.sonic.simple.services.impl.base.SonicServiceImpl;
 import org.cloud.sonic.simple.tools.JWTTokenTool;
@@ -92,7 +93,7 @@ public class UsersServiceImpl extends SonicServiceImpl<UsersMapper, Users> imple
         try {
             boolean authResult = ldapTemplate.authenticate(userBaseDN, filter.toString(), password);
             if (create) {
-                usersRepository.save(buildUser(userInfo));
+                save(buildUser(userInfo));
             }
             return authResult;
         } catch (Exception e) {

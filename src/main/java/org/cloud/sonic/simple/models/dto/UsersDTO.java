@@ -36,4 +36,6 @@ public class UsersDTO implements Serializable, TypeConverter<UsersDTO, Users> {
     @Positive
     @ApiModelProperty(value = "角色", required = true, example = "1")
     Integer role;
+
+
 }

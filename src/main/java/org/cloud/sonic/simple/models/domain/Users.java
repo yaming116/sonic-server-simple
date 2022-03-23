@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.gitee.sunchenbin.mybatis.actable.annotation.*;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlCharsetConstant;
 import com.gitee.sunchenbin.mybatis.actable.constants.MySqlEngineConstant;
+import io.swagger.annotations.ApiModelProperty;
 import org.cloud.sonic.simple.models.base.TypeConverter;
 import org.cloud.sonic.simple.models.dto.UsersDTO;
 import io.swagger.annotations.ApiModel;
@@ -15,7 +16,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import org.cloud.sonic.simple.models.interfaces.UserLoginType;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -50,4 +53,8 @@ public class Users implements Serializable, TypeConverter<Users, UsersDTO> {
     @Column(value = "user_name", isNull = false, comment = "用户名")
     @Unique(value = "UNI_USER_NAME", columns = "user_name")
     private String userName;
+
+    @TableField
+    @Column(value = "source", isNull = false, comment = "用户来源")
+    String source = UserLoginType.LOCAL;
 }
