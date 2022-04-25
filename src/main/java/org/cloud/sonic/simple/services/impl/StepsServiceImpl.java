@@ -133,9 +133,7 @@ public class StepsServiceImpl extends SonicServiceImpl<StepsMapper, Steps> imple
         }
         // 子步骤的caseId跟随父步骤的
         Steps parent = getById(stepsDTO.getParentId());
-        if (ObjectUtils.isEmpty(parent)) {
-            stepsDTO.setCaseId(0);
-        } else {
+        if (!ObjectUtils.isEmpty(parent)) {
             stepsDTO.setCaseId(parent.getCaseId());
         }
         Steps steps = stepsDTO.convertTo();
