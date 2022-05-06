@@ -11,6 +11,7 @@ public enum RespEnum {
     UPDATE_OK(2000, "编辑成功！"),
     DELETE_OK(2000, "删除成功！"),
     UPLOAD_OK(2000, "上传成功！"),
+    COPY_OK(2000,"复制成功"),
     UNAUTHORIZED(1001, "身份验证异常！"),
     SERVICE_NOT_FOUND(1002, "相关服务不可用！"),
     ID_NOT_FOUND(3001, "id不存在！"),
