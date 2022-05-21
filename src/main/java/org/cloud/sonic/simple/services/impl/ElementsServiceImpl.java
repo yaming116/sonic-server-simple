@@ -1,6 +1,7 @@
 package org.cloud.sonic.simple.services.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.cloud.sonic.simple.mapper.ElementsMapper;
@@ -92,5 +93,10 @@ public class ElementsServiceImpl extends SonicServiceImpl<ElementsMapper, Elemen
     @Override
     public boolean deleteByProjectId(int projectId) {
         return baseMapper.delete(new LambdaQueryWrapper<Elements>().eq(Elements::getProjectId, projectId)) > 0;
+    }
+
+    @Override
+    public List<Integer> selectByEleName(String eleName) {
+        return elementsMapper.selectEleIdByEleName(eleName);
     }
 }

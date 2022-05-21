@@ -19,4 +19,10 @@ public interface ElementsService extends IService<Elements> {
     Elements findById(int id);
 
     boolean deleteByProjectId(int projectId);
+
+    /**
+     * 按照元素名称查找元素Id
+     * @param eleName
+     */
+    List<Integer> selectByEleName(String eleName);
 }

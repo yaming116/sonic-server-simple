@@ -42,6 +42,17 @@ public interface StepsService extends IService<Steps> {
 
     CommentPage<StepsDTO> findByProjectIdAndPlatform(int projectId, int platform, Page<Steps> pageable);
 
+    /**
+     * 按照元素名称或者步骤文本搜索步骤
+     * @param projectId
+     * @param platform
+     * @param pageable
+     * @param searchContent   stpes表中content字段， element表中 ele_name字段
+     * @return
+     */
+    CommentPage<StepsDTO> searchFindByProjectIdAndPlatform(int projectId, int platform, Page<Steps> pageable,
+                                                           String searchContent);
+
     List<Steps> listStepsByElementsId(int elementsId);
 
     boolean deleteByProjectId(int projectId);

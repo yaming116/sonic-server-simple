@@ -27,4 +27,7 @@ public interface StepsMapper extends BaseMapper<Steps> {
             "where pss.public_steps_id = #{publicStepsId}")
     List<Steps> listByPublicStepsId(@Param("publicStepsId") int publicStepsId);
 
+    @Select("select * from steps where id = #{id}")
+    Steps selectStepsById(@Param("id")Integer id);
+
 }

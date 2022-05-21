@@ -24,4 +24,7 @@ public interface ElementsMapper extends BaseMapper<Elements> {
                 "inner join elements e on se.elements_id = e.id " +
             "where se.steps_id = #{stepId}")
     List<ElementsDTO> listElementsByStepsId(@Param("stepId") Integer stepId);
+
+    @Select("select id from elements where ele_name like '%${ele_name}%'")
+    List<Integer> selectEleIdByEleName(@Param("ele_name")String eleName);
 }

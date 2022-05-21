@@ -22,6 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,11 +36,16 @@ import java.util.stream.Collectors;
 @Service
 public class StepsServiceImpl extends SonicServiceImpl<StepsMapper, Steps> implements StepsService {
 
-    @Autowired private StepsMapper stepsMapper;
-    @Autowired private ElementsMapper elementsMapper;
-    @Autowired private PublicStepsMapper publicStepsMapper;
-    @Autowired private PublicStepsStepsMapper publicStepsStepsMapper;
-    @Autowired private StepsElementsMapper stepsElementsMapper;
+    @Autowired
+    private StepsMapper stepsMapper;
+    @Autowired
+    private ElementsMapper elementsMapper;
+    @Autowired
+    private PublicStepsMapper publicStepsMapper;
+    @Autowired
+    private PublicStepsStepsMapper publicStepsStepsMapper;
+    @Autowired
+    private StepsElementsMapper stepsElementsMapper;
 
     @Transactional
     @Override
@@ -199,6 +207,67 @@ public class StepsServiceImpl extends SonicServiceImpl<StepsMapper, Steps> imple
         handleSteps(stepsDTOList);
 
         return CommentPage.convertFrom(page, stepsDTOList);
+    }
+
+    /**
+     * 步骤列表:搜索
+     */
+    @Override
+    public CommentPage<StepsDTO> searchFindByProjectIdAndPlatform(int projectId, int platform, Page<Steps> pageable,
+                                                                  String searchContent) {
+        //按照元素名称搜索元素id，
+        List<Integer> eleList = elementsMapper.selectEleIdByEleName(searchContent);
+
+        //用元素id去搜索元素关联步骤
+        List<Integer> stepsIds = new ArrayList<>();
+        for (int ele : eleList) {
+            List<Integer> stepsIdList = stepsElementsMapper.selectStepsIdByEleId(ele);
+            stepsIds.addAll(stepsIdList);
+        }
+        //去除重复，排序
+        List<Integer> newStepsIds = stepsIds.stream().distinct().sorted(Collections.reverseOrder())
+                .collect(Collectors.toList());
+        //根据步骤id 输出相关的步骤
+        List<Steps> steps = new ArrayList<>();
+        for (int stepsId : newStepsIds) {
+            Steps step = stepsMapper.selectStepsById(stepsId);
+            if (step != null) {
+                steps.add(step);
+            }
+        }
+
+        //用content获取步骤里面的公共步骤等步骤
+        Page<Steps> page = lambdaQuery().eq(Steps::getProjectId, projectId)
+                .eq(Steps::getPlatform, platform)
+                .eq(Steps::getParentId, 0)
+                .like(Steps::getContent, searchContent)
+                .orderByDesc(Steps::getId)
+                .page(pageable);
+
+
+        //保存前面的步骤，并加入元素名称关联的步骤
+        List<Steps> records = page.getRecords();
+        if (records.size() != 0) {
+            //steps表中content查找不为空就执行addAll，否则就直接set进去值
+            records.addAll(steps);
+            //搜出来步骤 和 steps表里面的步骤一起排个序（降序）
+            records.sort(Comparator.comparing(Steps::getId, Comparator.reverseOrder()));
+            page.setRecords(records);
+        } else {
+            page.setRecords(steps);
+        }
+
+        List<StepsDTO> stepsDTOList = page.getRecords()
+                .stream().map(TypeConverter::convertTo).collect(Collectors.toList());
+        handleSteps(stepsDTOList);
+        //按照页码返回对应数据
+        List<StepsDTO> stepsDTOS = CommentPage.listPaging(stepsDTOList, (int) pageable.getCurrent(), (int) pageable.getSize());
+
+        //重写总页数和总元素数量
+        page.setTotal(stepsDTOList.size());
+        page.setPages((stepsDTOList.size() / pageable.getSize()) + 1);
+
+        return CommentPage.convertFrom(page, stepsDTOS);
     }
 
     @Override

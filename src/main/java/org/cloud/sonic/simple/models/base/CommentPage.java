@@ -63,4 +63,36 @@ public class CommentPage<T> implements Serializable {
     public static <T> CommentPage<T> emptyPage() {
         return new CommentPage<>(0, new ArrayList<>(), 0, 0, 0);
     }
+
+
+    /**
+     * @param list 进行分页的list
+     * @param pageNo 页码
+     * @param pageSize 每页显示条数
+     * @return 分页后数据
+     */
+    public static <T> List<T> listPaging(List<T> list, Integer pageNo, Integer pageSize){
+        if(list == null){
+            list = new ArrayList<T>();
+        }
+        if(pageNo == null){
+            pageNo = 1;
+        }
+        if(pageSize == null){
+            pageSize = 10;
+        }
+        if(pageNo <= 0){
+            pageNo = 1;
+        }
+
+        int totalitems = list.size();
+        List<T> pagingList = new ArrayList<T>();
+
+        int totalNum = ((pageNo - 1) * pageSize) + pageSize > totalitems ? totalitems : ((pageNo - 1) * pageSize) + pageSize;
+        for(int i = (pageNo-1)*pageSize; i < totalNum; i++) {
+            pagingList.add(list.get(i));
+        }
+        return pagingList;
+    }
+
 }

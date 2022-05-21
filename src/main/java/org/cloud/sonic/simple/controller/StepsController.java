@@ -54,6 +54,25 @@ public class StepsController {
     }
 
     @WebAspect
+    @ApiOperation(value = "搜索查找步骤列表", notes = "查找对应用例id下的步骤列表（分页）")
+    @ApiImplicitParams(value = {
+            @ApiImplicitParam(name = "projectId", value = "项目id", dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "platform", value = "平台", dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "page", value = "页码", dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "pageSize", value = "页数据大小", dataTypeClass = Integer.class),
+            @ApiImplicitParam(name = "searchContent", value = "搜索文本", dataTypeClass = String.class)
+    })
+    @GetMapping("/search/list")
+    public RespModel<CommentPage<StepsDTO>> searchFindAll(@RequestParam(name = "projectId") int projectId,
+                                                    @RequestParam(name = "platform") int platform,
+                                                    @RequestParam(name = "page") int page,
+                                                    @RequestParam(name = "pageSize") int pageSize,
+                                                          @RequestParam(name="searchContent")String searchContent) {
+        Page<Steps> pageable = new Page<>(page, pageSize);
+        return new RespModel<>(RespEnum.SEARCH_OK, stepsService.searchFindByProjectIdAndPlatform(projectId, platform,
+                pageable,searchContent));
+    }
+    @WebAspect
     @ApiOperation(value = "查找步骤列表", notes = "查找对应用例id下的步骤列表")
     @ApiImplicitParam(name = "caseId", value = "测试用例id", dataTypeClass = Integer.class)
     @GetMapping("/listAll")
